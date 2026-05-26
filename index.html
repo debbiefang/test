@@ -122,19 +122,6 @@
   @keyframes glow-pulse{0%,100%{opacity:.35;}50%{opacity:.7;}}
   @keyframes shimmer{0%{background-position:120% 0;}45%,100%{background-position:-120% 0;}}
 
-  /* ---- just-for-fun flying cars ---- */
-  .cars-overlay{position:fixed;inset:0;z-index:9999;pointer-events:none;display:none;overflow:hidden;}
-  .cars-overlay.show{display:block;}
-  .car{position:absolute;font-size:3rem;will-change:transform;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25));}
-  .julia-greet{position:absolute;top:38%;left:50%;transform:translate(-50%,-50%) scale(.6);
-    font-family:'Fraunces',serif;font-style:italic;font-size:clamp(3rem,11vw,7rem);color:#fff;
-    text-shadow:0 4px 30px rgba(180,120,70,.8),0 0 60px rgba(255,210,140,.6);opacity:0;text-align:center;}
-  .cars-overlay.show .julia-greet{animation:julia-pop 1s .2s cubic-bezier(.3,1.5,.5,1) forwards;}
-  @keyframes julia-pop{to{opacity:1;transform:translate(-50%,-50%) scale(1);}}
-  @keyframes fly-rtl{from{transform:translateX(0)}to{transform:translateX(-130vw)}}
-  @keyframes fly-ltr{from{transform:translateX(0) scaleX(-1)}to{transform:translateX(130vw) scaleX(-1)}}
-  @keyframes fly-zoom{0%{transform:translate(-50%,-50%) scale(.1);opacity:0}30%{opacity:1}100%{transform:translate(-50%,-50%) scale(6);opacity:0}}
-
   /* sticky scroll CTA */
   .sticky-cta{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);z-index:50;background:var(--bg-deep);color:#e9dcc6;font-size:.74rem;letter-spacing:.24em;text-transform:uppercase;text-decoration:none;padding:16px 32px;border-radius:40px;box-shadow:0 12px 40px rgba(15,13,11,.3);transition:transform .5s cubic-bezier(.2,.7,.3,1),background .3s;opacity:.97;}
   .sticky-cta.show{transform:translateX(-50%) translateY(0);}
@@ -255,10 +242,6 @@
   </footer>
 </div>
 
-<div class="cars-overlay" id="carsOverlay" aria-hidden="true">
-  <div class="julia-greet" id="juliaGreet">Julia! 🚗✨</div>
-</div>
-
 <a href="#join" class="sticky-cta" id="stickyCta">Join the waitlist</a>
 
 <script>
@@ -284,44 +267,9 @@
     const data = { firstName: form.firstName.value.trim(), contact: form.contact.value.trim(), drawing: form.drawing.value.trim(), version: "A", timestamp: new Date().toISOString() };
     try {
       await fetch(ENDPOINT, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(data) });
-      form.style.display='none'; success.classList.add('show'); launchCars();
+      form.style.display='none'; success.classList.add('show');
     } catch (err) { btn.disabled=false; btn.textContent='Join the waitlist'; alert('Something went wrong — please try again.'); }
   });
-
-  // ---- just-for-fun flying cars ----
-  function launchCars(){
-    const overlay = document.getElementById('carsOverlay');
-    overlay.classList.add('show');
-    const cars = ['🚗','🚙','🏎️','🚕','🚓','🛻','🚐'];
-    // streaking cars across the screen
-    for (let i=0;i<22;i++){
-      const c = document.createElement('div');
-      c.className='car';
-      c.textContent = cars[Math.floor(Math.random()*cars.length)];
-      const top = Math.random()*90;
-      const dur = 1.6 + Math.random()*2.2;
-      const delay = Math.random()*1.8;
-      const size = 1.6 + Math.random()*2.4;
-      const ltr = Math.random()>0.5;
-      c.style.top = top+'vh';
-      c.style.fontSize = size+'rem';
-      if (ltr){ c.style.left='-12vw'; c.style.animation=`fly-ltr ${dur}s ${delay}s linear forwards`; }
-      else    { c.style.right='-12vw'; c.style.animation=`fly-rtl ${dur}s ${delay}s linear forwards`; }
-      overlay.appendChild(c);
-    }
-    // a few cars zooming toward the viewer
-    for (let i=0;i<6;i++){
-      const c = document.createElement('div');
-      c.className='car';
-      c.textContent = cars[Math.floor(Math.random()*cars.length)];
-      c.style.left=(20+Math.random()*60)+'vw';
-      c.style.top=(20+Math.random()*55)+'vh';
-      c.style.animation=`fly-zoom ${1.4+Math.random()*1.2}s ${0.4+Math.random()*2}s ease-in forwards`;
-      overlay.appendChild(c);
-    }
-    // clean up after the show
-    setTimeout(()=>{ overlay.classList.remove('show'); overlay.querySelectorAll('.car').forEach(el=>el.remove()); }, 6500);
-  }
 </script>
 </body>
 </html>
